@@ -100,7 +100,11 @@ Package splashp2p A simple UDP peer-to-peer framework.
 - Feedback: cryptokass@gmail.com
 
 
+<br></br>
+
 ---
+
+![OVERVIEW GRAPH](https://i.imgur.com/cUp6QaY.png)
 
 
 *Readme last updated: 2018.12.26*
