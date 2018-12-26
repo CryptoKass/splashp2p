@@ -23,7 +23,7 @@ func main() {
    logic.MessageHandlers["hello"] = helloworldHandler
     
     // create p2p manager object
-    p2p := network.CreateNetwork(3000/*port*/, 2048/*message size*/, logic/*behavour*/)
+    p2p := network.CreateNetwork(3000/*port*/, 1024/*message size*/, logic/*behavour*/)
 
     //begin listening over udp
     p2p.Listen()
@@ -58,7 +58,7 @@ Create your peer to peer network with `network.CreateNetwork(port, message, beha
 Here is an example using the DefaultBehaviour which is a ping-pong example:
 ```golang
 func main() {
-	p2pnetwork := network.CreateNetwork(3000/*port*/, 2048/*message size*/, splashp2p.DefaultBehaviour/*behavour*/)
+	p2pnetwork := network.CreateNetwork(3000/*port*/, 1024/*message size*/, splashp2p.DefaultBehaviour/*behavour*/)
 	p2pnetwork.Listen()
 	for {//forever}
 }
