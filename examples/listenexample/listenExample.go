@@ -29,7 +29,7 @@ func ListenExample() {
 }
 
 func main() {
-	network := network.CreateNetwork(3000, 2048, splashp2p.DefaultBehaviour)
+	network := network.CreateNetwork(3000, 1024, splashp2p.DefaultBehaviour)
 	network.Listen()
 
 	for {

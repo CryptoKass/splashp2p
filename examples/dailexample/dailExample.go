@@ -30,7 +30,7 @@ func DailExample() {
 
 func main() {
 
-	network := network.CreateNetwork(3030, 2048, splashp2p.DefaultBehaviour)
+	network := network.CreateNetwork(3030, 1024, splashp2p.DefaultBehaviour)
 	network.Listen()
 	network.Connect("127.0.0.1:3000")
 
