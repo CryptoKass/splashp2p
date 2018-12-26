@@ -22,10 +22,11 @@ package network
 import (
 	"log"
 	"net"
-	"splashp2p/message"
-	"splashp2p/peer"
 	"strconv"
 	"time"
+
+	"github.com/CryptoKass/splashp2p/message"
+	"github.com/CryptoKass/splashp2p/peer"
 )
 
 // Net is a structure used to manage peer communication including

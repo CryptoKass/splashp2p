@@ -20,7 +20,7 @@
 package peer
 
 import (
-	"splashp2p/message"
+	"github.com/CryptoKass/splashp2p/message"
 )
 
 // Behaviour Describes how a peer will response to events

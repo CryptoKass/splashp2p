@@ -23,7 +23,8 @@ import (
 	"encoding/json"
 	"log"
 	"net"
-	"splashp2p/message"
+
+	"github.com/CryptoKass/splashp2p/message"
 )
 
 // Peer - Peer manages commincation to and from a single peer.

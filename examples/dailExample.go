@@ -20,8 +20,8 @@
 package examples
 
 import (
-	"splashp2p"
-	"splashp2p/network"
+	"github.com/CryptoKass/splashp2p"
+	"github.com/CryptoKass/splashp2p/network"
 )
 
 func DailExample() {

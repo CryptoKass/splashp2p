@@ -3,9 +3,10 @@ package splashp2p
 
 import (
 	"log"
-	"splashp2p/message"
-	"splashp2p/peer"
 	"time"
+
+	"github.com/CryptoKass/splashp2p/message"
+	"github.com/CryptoKass/splashp2p/peer"
 )
 
 // DefaultBehaviour defines simple ping-pong handlers and logging for
