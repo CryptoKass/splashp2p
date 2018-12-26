@@ -17,7 +17,12 @@ SplashP2P is a simple peer to peer libary using the built in `net` lib; It was c
 - No thirdparty depedencies
 - Configurable Behaviour.
 
+
 # Examples:
+Below are some examples you may find useful:
+
+
+### Listen to network: *Net.CreateNetwork 
 Create your peer to peer network with `network.CreateNetwork(port, message, behavour)`.
 Here is an example using the DefaultBehaviour which is a ping-pong example:
 ```golang
@@ -28,6 +33,16 @@ func main() {
 }
 ```
 
+
+### Connect to a peer
+Connect to a givens peers IP. Assuming the peer is listening, with `network.Connect(ip)`.
+```golang
+p2pnetwork.Listen() //must be listening before you can connect to a peer
+p2pnetwork.Connect("some.peer:6677")
+```
+
+
+### Custom logic: *Behaviour.MessageHandlers
 You can define how you will handle messages and events by creating your own `peer.Behaviour`.
 (Example:)
 ```golang
@@ -46,7 +61,22 @@ customBehaviour.MessageHandlers["hello"] = helloworldHandler
 
 ```
 
+
+### Broadcast: *Net.Broadcast
+You can broadcast a message to all connected peers using `*Net.Broadcast`
+```golang
+// create a network.Net to interface with peers
+p2pnetwork := p2pnetwork := network.CreateNetwork(...)
+//connect to some peers
+p2pnetwork.Connect("somepeer:6677")
+// define a message to broadcast
+msg := message.Message{Tag:"hello-world", Timestamp: time.Now().Unix()}
+// broadcast the message
+p2pnetwork.Broadcast(msg)
+```
+
 For more examples please see the examples subdirectory or look at the godoc.
+
 
 # Todo:
 There are a range of things I have planned for this lib:
@@ -56,9 +86,11 @@ There are a range of things I have planned for this lib:
 - Add peer to timers -> timeout ect.
 - Improve documentation
 
+
 # Documentaion:
 Visit [GoDoc](https://godoc.org/github.com/CryptoKass/github.com/CryptoKass/splashp2p)
 Package splashp2p A simple UDP peer-to-peer framework.
+
 
 
 
@@ -67,5 +99,5 @@ Package splashp2p A simple UDP peer-to-peer framework.
 - Pull requests welcomed!
 - Feedback: cryptokass@gmail.com
 
-<br>
+</br>
 *Readme last updated: 2018.12.26*
