@@ -19,7 +19,7 @@
 package network
 
 import (
-	"fmt"
+	"log"
 	"net"
 	"splashp2p/message"
 	"splashp2p/peer"
@@ -91,21 +91,24 @@ func (n *Net) Listen() {
 		panic(err)
 	}
 
-	fmt.Println("[LISTENING]", "->", laddr)
+	log.Print("[LISTENING]", "->", laddr)
 
 	n.Listening = true
 	go func() {
 		for n.Listening {
+			// Read inbound message
 			buf := make([]byte, n.MaxMessageSize)
 			length, raddr, err := n.Conn.ReadFromUDP(buf)
 			if err != nil {
-				panic(err)
+				log.Print("[UDPREADERROR]-> Failed to read from udp, dumping error below")
+				log.Print(err)
+				continue
 			}
 
-			//Get peer
+			// Get peer object
 			cpeer, known := n.ConnectedPeers[raddr.String()]
 
-			//if peer is unknown createa new peer:
+			// if peer is unknown createa new peer:
 			if !known {
 				cpeer = peer.Peer{
 					Addr:      *raddr,
@@ -135,7 +138,7 @@ func (n *Net) Connect(address string) bool {
 
 	// check if peer is already connected
 	if cpeer, known := n.ConnectedPeers[address]; known {
-		fmt.Println("[CONNECT_ERROR] peer is already known.")
+		log.Print("[CONNECT_ERROR] peer is already known.")
 		cpeer.Send(message.PingMessage())
 		return false
 	}
