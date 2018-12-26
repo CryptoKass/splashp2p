@@ -3,6 +3,7 @@
  [![Build Status](https://travis-ci.org/CryptoKass/splashp2p.png?branch=master)](https://travis-ci.org/CryptoKass/splashp2p)
 *This project is part of the \*offical suite for the Splash Distributed Ledger. This repo is maintained by the Splash Foundation [http://SplashLedger.com](SplashLedger.com)*
 
+<br></br>
 # Getting stated:
 Download:
 ```shell
@@ -11,13 +12,43 @@ go get github.com/CryptoKass/splashp2p
 If you do not have the go command on your system, you need to [Install Go](http://golang.org/doc/install) first
 
 
+Usage:
+```golang
+func main() {
+    // load default logic
+    logic := splashp2p.DefaultBehaviour
+        
+
+    // add hello world message handler
+   logic.MessageHandlers["hello"] = helloworldHandler
+    
+    // create p2p manager object
+    p2p := network.CreateNetwork(3000/*port*/, 2048/*message size*/, logic/*behavour*/)
+
+    //begin listening over udp
+    p2p.Listen()
+
+    for {//forever}
+}
+
+func helloworldHandler(msg message.Message, p *peer.Peer) {
+    out := message.Message{
+        Tag:       "hello-world-response",
+        Payload:   "Hello World!",
+        Timestamp: time.Now().Unix(),
+    }
+     p.Send(out)
+}
+```
+
+<br></br>
 # Features:
 SplashP2P is a simple peer to peer libary using the built in `net` lib; It was created for the Splash distributed ledger (blockchain).
 - UDP
 - No thirdparty depedencies
 - Configurable Behaviour.
 
-
+<br></br>
 # Examples:
 Below are some examples you may find useful:
 
@@ -77,7 +108,7 @@ p2pnetwork.Broadcast(msg)
 
 For more examples please see the examples subdirectory or look at the godoc.
 
-
+<br></br>
 # Todo:
 There are a range of things I have planned for this lib:
 - Add test coverage.
@@ -86,14 +117,14 @@ There are a range of things I have planned for this lib:
 - Add peer to timers -> timeout ect.
 - Improve documentation
 
-
+<br></br>
 # Documentaion:
 Visit [GoDoc](https://godoc.org/github.com/CryptoKass/splashp2p):
 Package splashp2p A simple UDP peer-to-peer framework.
 
 
 
-
+<br></br>
 # Contribution:
 **If I got something wrong (which I almost certainly have) please let me know:**
 - Pull requests welcomed!
