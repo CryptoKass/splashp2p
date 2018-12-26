@@ -11,10 +11,6 @@ If you do not have the go command on your system, you need to [Install Go](http:
 
 # Documentaion:
 Visit [GoDoc](https://godoc.org/github.com/CryptoKass/github.com/CryptoKass/splashp2p/examples) 
-Package examples provices examples for using splashp2p
-
-Package examples provices examples for using splashp2p
-
 
 
 
