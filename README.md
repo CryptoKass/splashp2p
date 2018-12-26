@@ -27,10 +27,7 @@ Here is an example using the DefaultBehaviour which is a ping-pong example:
 func main() {
 	p2pnetwork := network.CreateNetwork(3000/*port*/, 2048/*message size*/, splashp2p.DefaultBehaviour/*behavour*/)
 	p2pnetwork.Listen()
-
-	for {
-		//forever
-	}
+	for {//forever}
 }
 ```
 
@@ -41,10 +38,10 @@ You can define how you will handle messages and events by creating your own `pee
 func helloworldHandler(msg message.Message, p *peer.Peer) {
     out := message.Message{
         Tag:       "hello-world-response",
-		Payload:   "Hello World!",
-		Timestamp: time.Now().Unix(),
+        Payload:   "Hello World!",
+        Timestamp: time.Now().Unix(),
     }
-	p.Send(out)
+    p.Send(out)
 }
 
 customBehaviour := peer.Behaviour{...}

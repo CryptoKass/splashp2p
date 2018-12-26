@@ -20,6 +20,7 @@
 package message
 
 import (
+	"encoding/json"
 	"time"
 )
 
@@ -27,6 +28,11 @@ type Message struct {
 	Tag       string
 	Payload   string
 	Timestamp int64
+}
+
+// Marshal - convert a message to json ([]byte)
+func (m *Message) Marshal() ([]byte, error) {
+	return json.Marshal(&m)
 }
 
 // PingMessage will generate a generic ping message

@@ -157,3 +157,22 @@ func (n *Net) Connect(address string) bool {
 	// !DONE
 	return true
 }
+
+// Broadcast - broadcast a message to all peers
+func (n *Net) Broadcast(msg message.Message) {
+
+	//broadcast asynchronusly because `net.WriteToUDP` is slow...
+	go func() {
+
+		buf, _ := msg.Marshal()
+		log.Print("[Broadcast]-> ", "to ", len(n.ConnectedPeers), " peers->", len(buf), "bytes")
+
+		// Call .Send(msg) on all connected peers
+		for _, cpeer := range n.ConnectedPeers {
+			cpeer.Send(msg)
+		}
+
+		log.Println("!done")
+	}()
+
+}
