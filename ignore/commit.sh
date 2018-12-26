@@ -50,6 +50,7 @@ echo "[TASK] Commiting to .git"
 
 if [ "$CommitMessage" != "" ]
 then
+cd ..
 git add .
 git commit -m"$CommitMessage"
 fi

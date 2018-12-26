@@ -16,43 +16,25 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+// Package examples provices examples for using splashp2p
 package examples
 
 import (
-	"log"
-	"splashp2p/message"
+	"splashp2p"
 	"splashp2p/network"
-	"splashp2p/peer"
-	"time"
 )
 
-func PingHandler(msg message.Message, p *peer.Peer) {
-	p.Send(message.PongMessage())
-}
-
-func PongHandler(msg message.Message, p *peer.Peer) {
-	p.Lastmsg = time.Now().Unix()
-	log.Print("peer::"+p.Addr.String(), "-> Pong recieved ")
-}
-
-func OnConnect(e int, p *peer.Peer, err error) {
-	log.Print("peer::"+p.Addr.String(), "-> Connected...")
-}
-
-func OnMessageFail(e int, p *peer.Peer, err error) {
-	log.Print("peer::"+p.Addr.String(), "-> Message failed.")
+func DailExample() {
+	//run example with go run dailExample.go
 }
 
 func main() {
-	handlers := make(map[string]peer.PeerMsgHandler)
-	handlers["ping"] = PingHandler
-	handlers["pong"] = PongHandler
 
-	network := network.CreateNetwork(3030, 2048, peer.Behaviour{OnConnect: OnConnect, OnMessageFail: OnMessageFail, MessageHandlers: handlers})
+	network := network.CreateNetwork(3030, 2048, splashp2p.DefaultBehaviour)
 	network.Listen()
 	network.Connect("127.0.0.1:3000")
 
 	for {
-
+		//forever
 	}
 }

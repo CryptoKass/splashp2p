@@ -16,6 +16,7 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+// Package peer Peers are assigned those splashp2p will communicate with.
 package peer
 
 import (
@@ -25,6 +26,16 @@ import (
 	"splashp2p/message"
 )
 
+// Peer - Peer manages commincation to and from a single peer.
+// Inbound messages are handled as json `[]byte` and in the
+// structure found in message.Message.
+//
+// Generally Peer objects are created by `network.Net` when a
+// message is recieved from a new IP.
+//
+// TODO: add support for a custom message interface.
+// TODO: add custom state struct.
+// TODO: add pointer to the network.Net parent.
 type Peer struct {
 	Addr      net.UDPAddr
 	Behaviour *Behaviour
@@ -32,6 +43,9 @@ type Peer struct {
 	Conn      net.UDPConn
 }
 
+// Handle - Raw inbound message bytes are passed into `handle`.
+// The bytes are unmarshaled and the messsage.Message is handled
+// using p.Behaviour.MessageHandlers[msg.Tag].
 func (p *Peer) Handle(msgRaw []byte) {
 	msg := message.Message{}
 	err := json.Unmarshal(msgRaw, &msg)
@@ -54,11 +68,14 @@ func (p *Peer) Handle(msgRaw []byte) {
 	return
 }
 
+// Send - will write a message.Message to this peers UDP
+// address.
 func (p *Peer) Send(msg message.Message) {
 	msgRaw, _ := json.Marshal(&msg)
 	length, err := p.Conn.WriteToUDP(msgRaw, &p.Addr)
 	if err != nil {
-		panic(err)
+		log.Print(err)
+		return
 	}
 	log.Print("peer::"+p.Addr.String(), "[OUT] ->", msg.Tag, "->", length, "bytes")
 }

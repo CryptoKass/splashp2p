@@ -16,20 +16,38 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+// Package peer Peers are assigned those splashp2p will communicate with.
 package peer
 
 import (
 	"splashp2p/message"
 )
 
+// Behaviour Describes how a peer will response to events
+// and handle inbound messages.
 type Behaviour struct {
-	OnConnect             PeerEvent
-	OnDisconnect          PeerEvent
-	OnMessageFail         PeerEvent
-	UnknownMessageHandler PeerMsgHandler
-	MessageHandlers       map[string]PeerMsgHandler
+	// Triggered when Connecting to a peer.
+	// This code will run wether the peer
+	// recieves the message or not.
+	OnConnect Event
+	// This will trigger just before peer.Disconnect()
+	// is run.
+	OnDisconnect Event
+	// This will trigger when an inbound message fails
+	// to be parsed.
+	OnMessageFail Event
+	// Describes how to handle a message that is not in
+	// MessageHandlers
+	UnknownMessageHandler MsgHandler
+	// Handle messages - the message.Tag is the
+	// key and MsgHandler is the value.
+	MessageHandlers map[string]MsgHandler
 }
 
-type PeerEvent func(e int, p *Peer, err error)
+// Event - `Peer.Event` is called by `peer.Peer` to handle events
+// such as OnConnect, OnDisconnect and OnMessageFail.
+type Event func(e int, p *Peer, err error)
 
-type PeerMsgHandler func(msg message.Message, p *Peer)
+// MsgHandler - `MessageHandler` is called by `peer.Peer` to
+// handle inbound message.
+type MsgHandler func(msg message.Message, p *Peer)

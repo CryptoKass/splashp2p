@@ -16,6 +16,7 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+// Package network contains structures and methods to handle peer communication.
 package network
 
 import (
@@ -76,9 +77,7 @@ func CreateNetwork(port int, maxMessageSize int, peerBehaviour peer.Behaviour) N
 
 // Listen - Listen will await for incomming UDP traffic to the
 // local address at the port specifcied by n.Port.
-//
-// Inbound messages are passed to peer.Handle().
-//
+// Inbound messages are passed to peer.Handle();
 // If input is from an unknown peer, a new network.Peer object
 // is created and associated with its IP.
 func (n *Net) Listen() {
