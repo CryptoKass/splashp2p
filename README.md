@@ -1,5 +1,5 @@
-# github.com/CryptoKass/splashp2p - SplashLedger:
-[![GODOC](https://godoc.org/github.com/CryptoKass/github.com/CryptoKass/splashp2p?status.svg)](https://godoc.org/github.com/CryptoKass/github.com/CryptoKass/splashp2p)
+# splashp2p - SplashLedger:
+[![GODOC](https://godoc.org/github.com/CryptoKass/splashp2p?status.svg)](https://godoc.org/github.com/CryptoKass/github.com/CryptoKass/splashp2p)
  [![Build Status](https://travis-ci.org/CryptoKass/splashp2p.png?branch=master)](https://travis-ci.org/CryptoKass/splashp2p)
 *This project is part of the \*offical suite for the Splash Distributed Ledger. This repo is maintained by the Splash Foundation [http://SplashLedger.com](SplashLedger.com)*
 
@@ -88,7 +88,7 @@ There are a range of things I have planned for this lib:
 
 
 # Documentaion:
-Visit [GoDoc](https://godoc.org/github.com/CryptoKass/github.com/CryptoKass/splashp2p)
+Visit [GoDoc](https://godoc.org/github.com/CryptoKass/splashp2p):
 Package splashp2p A simple UDP peer-to-peer framework.
 
 
@@ -100,4 +100,5 @@ Package splashp2p A simple UDP peer-to-peer framework.
 - Feedback: cryptokass@gmail.com
 
 </br>
+
 *Readme last updated: 2018.12.26*
