@@ -16,40 +16,45 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package message
+package examples
 
 import (
+	"log"
+	"splashp2p/message"
+	"splashp2p/network"
+	"splashp2p/peer"
 	"time"
 )
 
-type Message struct {
-	Tag       string
-	Payload   string
-	Timestamp int64
+func PingHandler(msg message.Message, p *peer.Peer) {
+	p.Send(message.PongMessage())
 }
 
-// PingMessage will generate a generic ping message
-// Ping messages are often used to measure latency
-// or check that a connection is still alive.
-// Peers who send a ping message will often await
-// a pong response message.
-func PingMessage() Message {
-	return Message{
-		Tag:       "ping",
-		Payload:   "ping",
-		Timestamp: time.Now().Unix(),
-	}
+func PongHandler(msg message.Message, p *peer.Peer) {
+	p.Lastmsg = time.Now().Unix()
+	log.Print("peer::"+p.Addr.String(), "[STATE] -> Ping-Pong recieved ")
 }
 
-// PongMessage will generate a generic pong message
-// Pong messages are often used to reply to ping
-// messages.
-// Peers will often reply to a inbound ping message
-// with a pong message.
-func PongMessage() Message {
-	return Message{
-		Tag:       "pong",
-		Payload:   "pong",
-		Timestamp: time.Now().Unix(),
+func OnConnect(e int, p *peer.Peer, err error) {
+	log.Print("peer::"+p.Addr.String(), "-> Connected...")
+}
+
+func OnMessageFail(e int, p *peer.Peer, err error) {
+	log.Print("peer::"+p.Addr.String(), "-> Message failed.")
+}
+
+func UnknownMessageHandler(msg message.Message, p *peer.Peer) {
+	log.Print("peer::"+p.Addr.String(), "->Uknown Message->", msg)
+}
+
+func main() {
+	handlers := make(map[string]peer.PeerMsgHandler)
+	handlers["ping"] = PingHandler
+	handlers["pong"] = PongHandler
+	network := network.CreateNetwork(3000, 2048, peer.Behaviour{OnConnect: OnConnect, OnMessageFail: OnMessageFail, MessageHandlers: handlers})
+	network.Listen()
+
+	for {
+
 	}
 }
