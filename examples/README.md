@@ -1,6 +1,7 @@
 # dailexample - SplashLedger:
-[![GODOC](https://godoc.org/github.com/CryptoKass/dailexample?status.svg)](https://godoc.org/github.com/CryptoKass/dailexample)
+[![GODOC](https://godoc.org/github.com/CryptoKass/splashp2p/examples?status.svg)](https://godoc.org/github.com/CryptoKass/splashp2p/examples)
 *This project is part of the \*offical suite for the Splash Distributed Ledger. This repo is maintained by the Splash Foundation [http://SplashLedger.com](SplashLedger.com)*
+
 
 # Getting stated:
 ```shell
@@ -8,8 +9,9 @@ go get github.com/CryptoKass/splashp2p/examples
 ```
 If you do not have the go command on your system, you need to [Install Go](http://golang.org/doc/install) first
 
+
 # Documentaion:
-Visit [GoDoc](https://godoc.org/github.com/CryptoKass/dailexample) 
+Visit [GoDoc](https://godoc.org/github.com/CryptoKass/splashp2p/examples) 
 
 
 
