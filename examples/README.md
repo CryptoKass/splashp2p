@@ -1,5 +1,5 @@
 # splashp2p/examples - SplashLedger:
-[!https://godoc.org/github.com/CryptoKass/splashp2p/examples?status.svg](https://godoc.org/github.com/CryptoKass/splashp2p/examples)
+[![GODOC](https://godoc.org/github.com/CryptoKass/splashp2p/examples?status.svg)](https://godoc.org/github.com/CryptoKass/splashp2p/examples)
 
 *This project is part of the \*offical suite for the Splash Distributed Ledger. This repo is maintained by the Splash Foundation [http://SplashLedger.com](SplashLedger.com)*
 

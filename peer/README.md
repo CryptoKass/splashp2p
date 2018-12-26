@@ -1,5 +1,5 @@
 # splashp2p/peer - SplashLedger:
-[!https://godoc.org/github.com/CryptoKass/splashp2p/peer?status.svg](https://godoc.org/github.com/CryptoKass/splashp2p/peer)
+[![GODOC](https://godoc.org/github.com/CryptoKass/splashp2p/peer?status.svg)](https://godoc.org/github.com/CryptoKass/splashp2p/peer)
 
 *This project is part of the \*offical suite for the Splash Distributed Ledger. This repo is maintained by the Splash Foundation [http://SplashLedger.com](SplashLedger.com)*
 
