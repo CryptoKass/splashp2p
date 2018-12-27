@@ -25,4 +25,4 @@ Package network contains structures and methods to handle peer communication.
 
 ---
 
-*Readme last updated: 2018.12.26*
+*Readme last updated: 2018.12.27*

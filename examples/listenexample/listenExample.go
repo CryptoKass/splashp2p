@@ -17,7 +17,7 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // Package examples provices examples for using splashp2p
-package examples
+package main
 
 import (
 	"github.com/CryptoKass/splashp2p"

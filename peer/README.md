@@ -29,4 +29,4 @@ Package peer Peers are assigned those splashp2p will communicate with.
 
 ---
 
-*Readme last updated: 2018.12.26*
+*Readme last updated: 2018.12.27*

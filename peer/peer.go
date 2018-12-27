@@ -23,6 +23,7 @@ import (
 	"encoding/json"
 	"log"
 	"net"
+	"time"
 
 	"github.com/CryptoKass/splashp2p/message"
 )
@@ -42,6 +43,11 @@ type Peer struct {
 	Behaviour *Behaviour
 	Lastmsg   int64
 	Conn      net.UDPConn
+
+	//Support for big messages:
+	bigDecay     time.Duration
+	FragmentsIn  map[string]FragmentIn
+	FragmentsOut map[string]FragmentOut
 }
 
 // Handle - Raw inbound message bytes are passed into `handle`.
@@ -70,13 +76,64 @@ func (p *Peer) Handle(msgRaw []byte) {
 }
 
 // Send - will write a message.Message to this peers UDP
-// address.
+// address. If the message is bigger than 1400 bytes
+// SendBigMessage will be used
 func (p *Peer) Send(msg message.Message) {
 	msgRaw, _ := json.Marshal(&msg)
+
+	//check if message is too big
+	if len(msgRaw) >= 1400 {
+		p.SendBigMessage(msg)
+		return
+	}
+
 	length, err := p.Conn.WriteToUDP(msgRaw, &p.Addr)
 	if err != nil {
 		log.Print(err)
 		return
 	}
 	log.Print("peer::"+p.Addr.String(), "[OUT] ->", msg.Tag, "->", length, "bytes")
+}
+
+// sendFragment - will write a `message.MessageFragment`
+// to this peers UDP address. You should use SendBigMessage()
+func (p *Peer) sendFragment(msg message.MessageFragment) {
+	msgRaw, _ := json.Marshal(&msg)
+	length, err := p.Conn.WriteToUDP(msgRaw, &p.Addr)
+	if err != nil {
+		log.Print(err)
+		return
+	}
+	log.Print("peer::"+p.Addr.String(), "[OUT] ->", msg.Tag, msg.Index, "/", msg.Max, "->", length, "bytes")
+}
+
+// SendBigMessage - will divide a large message into
+// `message.MessageFragment` and will send them indivually
+// to the peers UDP address.
+//
+// SendBigMessage is designed for messages larger than
+// 1400 bytes but smaller than 255,000 bytes
+func (p *Peer) SendBigMessage(msg message.Message) {
+	// this may take some time, best to do it asynchronusly
+	go func() {
+		// Divide messages
+		parts := message.DivideBigMessage(&msg)
+
+		// make outgoing fragment manager incase a message gets
+		// lost and the peer can request it
+		fragOut := FragmentOut{
+			id:     string(parts[0].ID),
+			parent: p,
+			parts:  parts,
+		}
+		fragOut.timeout = time.AfterFunc(p.bigDecay*2, fragOut.Decay)
+		p.FragmentsOut[fragOut.id] = fragOut
+
+		// BigFragment
+		for _, v := range parts {
+			p.sendFragment(v)
+			time.Sleep(50 * time.Millisecond)
+		}
+
+	}()
 }

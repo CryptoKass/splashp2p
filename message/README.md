@@ -25,4 +25,4 @@ Package message Contains the message structure that is used by splashp2p
 
 ---
 
-*Readme last updated: 2018.12.26*
+*Readme last updated: 2018.12.27*

@@ -23,4 +23,4 @@ Visit [GoDoc](https://godoc.org/github.com/CryptoKass/splashp2p/examples)
 
 ---
 
-*Readme last updated: 2018.12.26*
+*Readme last updated: 2018.12.27*

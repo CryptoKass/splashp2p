@@ -138,4 +138,4 @@ Package splashp2p A simple UDP peer-to-peer framework.
 ![OVERVIEW GRAPH](https://i.imgur.com/cUp6QaY.png)
 
 
-*Readme last updated: 2018.12.26*
+*Readme last updated: 2018.12.27*
