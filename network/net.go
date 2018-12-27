@@ -100,6 +100,9 @@ func (n *Net) Listen() {
 			buf := make([]byte, n.MaxMessageSize)
 			length, raddr, err := n.Conn.ReadFromUDP(buf)
 			if err != nil {
+				if n.Conn == nil {
+					n.Listening = false
+				}
 				log.Print("[UDPREADERROR]-> Failed to read from udp, dumping error below")
 				log.Print(err)
 				continue
@@ -173,7 +176,7 @@ func (n *Net) Broadcast(msg message.Message) {
 			cpeer.Send(msg)
 		}
 
-		log.Println("!done")
+		//log.Println("!done")
 	}()
 
 }
