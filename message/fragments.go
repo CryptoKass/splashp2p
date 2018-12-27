@@ -2,7 +2,6 @@ package message
 
 import (
 	"crypto/rand"
-	"encoding/hex"
 	"hash/fnv"
 	"math"
 )
@@ -45,7 +44,7 @@ func DivideBigMessage(msg *Message) (parts []MessageFragment) {
 
 		part := MessageFragment{
 			Tag:       msg.Tag,
-			Payload:   hex.EncodeToString(section),
+			Payload:   string(section),
 			ID:        id,
 			Index:     index,
 			Max:       int8(partCount),
@@ -74,4 +73,22 @@ func min(x, y int) int {
 		return x
 	}
 	return y
+}
+
+// CompileFragments merge fragments into a `message.Message` instance.
+func CompileFragments(parts []MessageFragment) Message {
+	//merge payloads
+	payload := make([]byte, 0)
+	for _, v := range parts {
+		payload = append(payload, []byte(v.Payload)...)
+	}
+
+	//create message
+	msg := Message{
+		Tag:       parts[0].Tag,
+		Payload:   string(payload),
+		Timestamp: parts[0].Timestamp,
+	}
+
+	return msg
 }

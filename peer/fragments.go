@@ -53,18 +53,7 @@ func (inbox *FragmentIn) Add(msg message.MessageFragment) {
 // handle the resulting `message.Message`.
 func (inbox *FragmentIn) Compile() {
 
-	//merge payloads
-	payload := make([]byte, 0)
-	for _, v := range inbox.parts {
-		payload = append(payload, []byte(v.Payload)...)
-	}
-
-	//create message
-	msg := message.Message{
-		Tag:       inbox.parts[0].Tag,
-		Payload:   string(payload),
-		Timestamp: inbox.parts[0].Timestamp,
-	}
+	msg := message.CompileFragments(inbox.parts)
 	buf, _ := msg.Marshal()
 
 	//handle
