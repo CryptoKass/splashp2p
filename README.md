@@ -4,6 +4,14 @@
 *This project is part of the \*offical suite for the Splash Distributed Ledger. This repo is maintained by the Splash Foundation [http://SplashLedger.com](SplashLedger.com)*
 
 <br></br>
+# Features:
+SplashP2P is a simple peer to peer libary using the built in `net` lib; It was created for the Splash distributed ledger (blockchain).
+- UDP
+- Support for big messages upto 255,000 bytes.
+- No thirdparty depedencies.
+- Configurable Behaviour.
+
+<br></br>
 # Getting stated:
 Download:
 ```shell
@@ -11,14 +19,13 @@ go get github.com/CryptoKass/splashp2p
 ```
 If you do not have the go command on your system, you need to [Install Go](http://golang.org/doc/install) first
 
-
-Usage:
+<br></br>
+# Usage:
 ```golang
 func main() {
     // load default logic
     logic := splashp2p.DefaultBehaviour
         
-
     // add hello world message handler
    logic.MessageHandlers["hello"] = helloworldHandler
     
@@ -42,17 +49,10 @@ func helloworldHandler(msg message.Message, p *peer.Peer) {
 ```
 
 <br></br>
-# Features:
-SplashP2P is a simple peer to peer libary using the built in `net` lib; It was created for the Splash distributed ledger (blockchain).
-- UDP
-- No thirdparty depedencies
-- Configurable Behaviour.
-
-<br></br>
 # Examples:
 Below are some examples you may find useful:
 
-
+<br></br>
 ### Listen to network: *Net.CreateNetwork 
 Create your peer to peer network with `network.CreateNetwork(port, message, behavour)`.
 Here is an example using the DefaultBehaviour which is a ping-pong example:
@@ -64,7 +64,7 @@ func main() {
 }
 ```
 
-
+<br></br>
 ### Connect to a peer
 Connect to a givens peers IP. Assuming the peer is listening, with `network.Connect(ip)`.
 ```golang
@@ -72,7 +72,7 @@ p2pnetwork.Listen() //must be listening before you can connect to a peer
 p2pnetwork.Connect("some.peer:6677")
 ```
 
-
+<br></br>
 ### Custom logic: *Behaviour.MessageHandlers
 You can define how you will handle messages and events by creating your own `peer.Behaviour`.
 (Example:)
@@ -92,7 +92,7 @@ customBehaviour.MessageHandlers["hello"] = helloworldHandler
 
 ```
 
-
+<br></br>
 ### Broadcast: *Net.Broadcast
 You can broadcast a message to all connected peers using `*Net.Broadcast`
 ```golang
