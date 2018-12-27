@@ -1,6 +1,7 @@
 # splashp2p - SplashLedger:
 [![GODOC](https://godoc.org/github.com/CryptoKass/splashp2p?status.svg)](https://godoc.org/github.com/CryptoKass/splashp2p)
  [![Build Status](https://travis-ci.org/CryptoKass/splashp2p.png?branch=master)](https://travis-ci.org/CryptoKass/splashp2p)
+[![Coverage Status](https://coveralls.io/repos/github/CryptoKass/splashp2p/badge.svg?branch=master)](https://coveralls.io/github/CryptoKass/splashp2p?branch=master)
 *This project is part of the \*offical suite for the Splash Distributed Ledger. This repo is maintained by the Splash Foundation [http://SplashLedger.com](SplashLedger.com)*
 
 <br></br>
