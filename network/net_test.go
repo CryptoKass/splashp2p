@@ -45,15 +45,12 @@ func TestNetwork(t *testing.T) {
 	behaviour := splashp2p.DefaultBehaviour
 	behaviour.MessageHandlers = testhandlers
 
-	running := true
-
 	//Listener
 	go func() {
 		n := network.CreateNetwork(3333, 1024, behaviour)
 		n.Listen()
 
-		for running {
-		}
+		time.Sleep(time.Second * 2)
 	}()
 
 	//Sender
@@ -67,8 +64,7 @@ func TestNetwork(t *testing.T) {
 			t.Log("Sending message")
 			n.Broadcast(msg)
 		}
-		for running {
-		}
+		time.Sleep(time.Second * 2)
 	}()
 
 	//give network time to look over message
@@ -78,7 +74,6 @@ func TestNetwork(t *testing.T) {
 		t.Errorf("some behaviour didnt trigger, testvar was %d, wanted %d", testVar, 10)
 	}
 
-	running = false
 	return
 
 }
