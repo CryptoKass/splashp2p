@@ -1,78 +1,31 @@
-// Copyright 2018 <kasscrypto@gmail.com>
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-// software and associated documentation files (the "Software"), to deal in the Software
-// without restriction, including without limitation the rights to use, copy, modify,
-// merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to the following
-// conditions:
-//
-// The above copyright notice and this permission notice shall be included in all copies
-// or substantial portions of the Software.
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-// CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
-// OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-// Package network contains structures and methods to handle peer communication.
 package network
 
 import (
+	"encoding/json"
 	"log"
 	"net"
 	"strconv"
 	"time"
-
-	"github.com/CryptoKass/splashp2p/message"
-	"github.com/CryptoKass/splashp2p/peer"
 )
 
-// Net is a structure used to manage peer communication including
-// incoming and outgoing messages. Net uses UDP to communicates.
-// For each peer that connects a network.Peer is associated with
-// them and is the conext used to Handle message to and from that
-// peer.
-//
-// Net should be constructd with:
-// 	net := CreateNetwork()
-//
-// You can begin listening with
-// 	net.Listen()
-//
-// You can automattically connect to peers using:
-// 	net.Connect("splashnode.io:6677")
-//
-type Net struct {
-	// ConnectedPeer - A list of peers with active connnections.
-	ConnectedPeers map[string]peer.Peer
-	// Address - The address of the local node.
-	Address net.UDPAddr
-	// Conn - The UDP 'connection' used to send messages.
-	Conn *net.UDPConn
-	// Port - The port that this node is listening on
-	// by default this is 6677.
-	Port int
-	// MaxMessageSize - Max size of message that this node is willing
-	// To recieve.
+type Middleware func(in *Request, out *Response) bool
+type Handler func(in Request, out Response)
+
+type Network struct {
+	Address        net.UDPAddr
+	Conn           *net.UDPConn
+	Peers          map[string]*Peer
+	Listening      bool
+	handlers       map[string]func(in Request, out Response)
+	middleware     []Middleware
 	MaxMessageSize int
-	// Listening - can be set to false to stop the
-	// LIsten loop, if it is running.
-	Listening bool
-	// Behaviour: Default peer behaviour
-	Behaviour peer.Behaviour
 }
 
-// CreateNetwork is used to initialize a network.Net object.
-// see network.Net, network.*Net.Listen, network.*Net.Connect
-func CreateNetwork(port int, maxMessageSize int, peerBehaviour peer.Behaviour) Net {
-	return Net{
-		ConnectedPeers: make(map[string]peer.Peer),
-		Address:        net.UDPAddr{Port: port},
-		Port:           port,
-		MaxMessageSize: maxMessageSize,
-		Behaviour:      peerBehaviour,
+func NewNetwork() *Network {
+	return &Network{
+		Peers:      make(map[string]*Peer),
+		handlers:   make(map[string]func(in Request, out Response)),
+		middleware: make([]Middleware, 0),
 	}
 }
 
@@ -81,7 +34,7 @@ func CreateNetwork(port int, maxMessageSize int, peerBehaviour peer.Behaviour) N
 // Inbound messages are passed to peer.Handle();
 // If input is from an unknown peer, a new network.Peer object
 // is created and associated with its IP.
-func (n *Net) Listen() {
+func (n *Network) Listen() {
 	var err error
 	laddr := &n.Address
 
@@ -109,30 +62,82 @@ func (n *Net) Listen() {
 			}
 
 			// Get peer object
-			cpeer, known := n.ConnectedPeers[raddr.String()]
+			cpeer, known := n.Peers[raddr.String()]
 
 			// if peer is unknown createa new peer:
 			if !known {
-				cpeer = peer.Peer{
-					Addr:      *raddr,
-					Lastmsg:   time.Now().Unix(),
-					Conn:      *n.Conn,
-					Behaviour: &n.Behaviour,
+				cpeer = &Peer{
+					Addr:    *raddr,
+					Lastmsg: time.Now().Unix(),
+					Conn:    *n.Conn,
 				}
-				n.ConnectedPeers[raddr.String()] = cpeer
+				n.Peers[raddr.String()] = cpeer
 				//cpeer.Behaviour.OnConnect(peer.EVENT_CONNECT, &cpeer, nil)
 			}
 
 			//pass message to peer object to handle
-			cpeer.Handle(buf[:length])
+			n.formatAndHandleRequest(cpeer, buf[:length])
 		}
 	}()
 }
 
+func (n *Network) formatAndHandleRequest(peer *Peer, buf []byte) {
+	var netMsg NetworkMessage
+	err := json.Unmarshal(buf, netMsg)
+	if err != nil {
+		log.Println("err - bad request, bytes failed to parse", err)
+		return
+	}
+
+	//format request
+	in := Request{
+		Sender: peer,
+		Tag:    netMsg.Tag,
+		Body:   netMsg.Payload,
+		Vars:   make(map[string]interface{}),
+	}
+	//format response
+	out := Response{
+		Peer: peer,
+		Tag:  "",
+		Body: []byte{},
+	}
+
+	//pass through middleware
+	for i := 0; i < len(n.middleware); i++ {
+		if !n.middleware[i](&in, &out) {
+			return
+		}
+	}
+
+	//handle
+	if handler, known := n.handlers[in.Tag]; !known {
+		handler(in, out)
+	}
+
+	log.Printf("unknown request '%s' recieved from peer %s.", in.Tag, in.Sender.Addr.String())
+	return
+}
+
+// Handle registers a new handler for a given command. The handler
+// is a function in the form `func(in Request, out Response)`
+func (n *Network) Handle(command string, handler Handler) {
+	n.handlers[command] = handler
+}
+
+// AddMiddleware will add a new Middleware function to the stack.
+// Middleware will be called on a valid request, before a message is passed to the handler;
+// If a middleware func doesnt return true, then request will be discarded.
+//
+// Middleware is a function in the form `func(in Request, out Response) bool`
+func (n *Network) AddMiddleware(middleware Middleware) {
+	n.middleware = append(n.middleware, middleware)
+}
+
 // Connect can be used to connect to a previously unknown peer.
-// If a peer is already in n.ConnectedPeers then a ping message
+// If a peer is already in n.Peers then a ping message
 // is sent and `false` is returned.
-func (n *Net) Connect(address string) bool {
+func (n *Network) Connect(address string) bool {
 
 	// parse address string into net.UDPAddr
 	ip, portString, _ := net.SplitHostPort(address)
@@ -140,43 +145,38 @@ func (n *Net) Connect(address string) bool {
 	addr := net.UDPAddr{IP: net.ParseIP(ip), Port: int(port)}
 
 	// check if peer is already connected
-	if cpeer, known := n.ConnectedPeers[address]; known {
-		log.Print("[CONNECT_ERROR] peer is already known.")
-		cpeer.Send(message.PingMessage())
+	if cpeer, known := n.Peers[address]; known {
+		log.Print("[CONNECT_ERROR] peer is already known.", cpeer.Addr.String())
 		return false
 	}
 
 	//Create new peer object
-	newpeer := peer.Peer{
-		Addr:      addr,
-		Lastmsg:   time.Now().Unix(),
-		Conn:      *n.Conn,
-		Behaviour: &n.Behaviour,
+	newpeer := Peer{
+		Addr:    addr,
+		Lastmsg: time.Now().Unix(),
+		Conn:    *n.Conn,
 	}
 
 	//Ping the peer
-	n.ConnectedPeers[address] = newpeer
-	newpeer.Send(message.PingMessage())
+	n.Peers[address] = &newpeer
+	//newpeer.Send(message.PingMessage())
 
 	// !DONE
 	return true
 }
 
 // Broadcast - broadcast a message to all peers
-func (n *Net) Broadcast(msg message.Message) {
+func (n *Network) Broadcast(msg NetworkMessage) {
 
-	//broadcast asynchronusly because `net.WriteToUDP` is slow...
+	// broadcast asynchronusly because `net.WriteToUDP` is slow...
 	go func() {
 
-		buf, _ := msg.Marshal()
-		log.Print("[Broadcast]-> ", "to ", len(n.ConnectedPeers), " peers->", len(buf), "bytes")
-
 		// Call .Send(msg) on all connected peers
-		for _, cpeer := range n.ConnectedPeers {
+		for _, cpeer := range n.Peers {
 			cpeer.Send(msg)
 		}
 
-		//log.Println("!done")
+		// done!
 	}()
 
 }
