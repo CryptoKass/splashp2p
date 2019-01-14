@@ -24,10 +24,10 @@ If you do not have the go command on your system, you need to [Install Go](http:
 # Usage:
 ```golang
 //create a Network instance
-app := network.NewNetwork()
+app := splashp2p.NewNetwork()
 
 // define a handler for an inbound request
-app.Handle("ping", func(in network.Request, out network.Response) {
+app.Handle("ping", func(in splashp2p.Request, out splashp2p.Response) {
     if string(in.Body) == "ping" {
         //write new message using the `out` object
         out.WriteTag("pong") //the used to trigger the handler
