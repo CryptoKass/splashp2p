@@ -1,4 +1,4 @@
-package network
+package splashp2p
 
 import "encoding/json"
 

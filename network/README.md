@@ -1,17 +1,17 @@
-# network - SplashLedger:
-[![GODOC](https://godoc.org/github.com/CryptoKass/splashp2p/network?status.svg)](https://godoc.org/github.com/CryptoKass/splashp2p/network)
+#  - SplashLedger:
+[![GODOC](https://godoc.org/?status.svg)](https://godoc.org/)
 *This project is part of the \*offical suite for the Splash Distributed Ledger. This repo is maintained by the Splash Foundation [http://SplashLedger.com](SplashLedger.com)*
 
 
 # Getting stated:
 ```shell
-go get github.com/CryptoKass/splashp2p/network
+go get 
 ```
 If you do not have the go command on your system, you need to [Install Go](http://golang.org/doc/install) first
 
 
 # Documentaion:
-Visit [GoDoc](https://godoc.org/github.com/CryptoKass/splashp2p/network) 
+Visit [GoDoc](https://godoc.org/) 
 
 
 
@@ -23,4 +23,4 @@ Visit [GoDoc](https://godoc.org/github.com/CryptoKass/splashp2p/network)
 
 ---
 
-*Readme last updated: 2019.01.14*
+*Readme last updated: *

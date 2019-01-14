@@ -1,4 +1,4 @@
-package network
+package splashp2p
 
 // Response contains the outbound message
 type Response struct {

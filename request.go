@@ -1,4 +1,4 @@
-package network
+package splashp2p
 
 // Request contains a inbound message, and
 // associated data.
