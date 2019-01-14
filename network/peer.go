@@ -2,7 +2,6 @@ package network
 
 import (
 	"encoding/json"
-	"log"
 	"net"
 )
 
@@ -25,7 +24,7 @@ func (p *Peer) Send(netMsg NetworkMessage) {
 	}
 	_, err := p.Conn.WriteToUDP(msgRaw, &p.Addr)
 	if err != nil {
-		log.Println(err)
+		Logger.Println(err)
 		return
 	}
 

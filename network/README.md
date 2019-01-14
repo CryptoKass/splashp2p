@@ -23,4 +23,4 @@ Visit [GoDoc](https://godoc.org/github.com/CryptoKass/splashp2p/network)
 
 ---
 
-*Readme last updated: 2019.01.12*
+*Readme last updated: 2019.01.14*

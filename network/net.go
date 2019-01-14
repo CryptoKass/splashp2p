@@ -2,11 +2,17 @@ package network
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net"
+	"os"
 	"strconv"
 	"time"
 )
+
+var Logger = log.New(os.Stdout, "splashp2p >> ", 1)
+var Debug = false
+var LogOutput = os.Stdout
 
 type Middleware func(in *Request, out *Response) bool
 type Handler func(in Request, out Response)
@@ -23,9 +29,10 @@ type Network struct {
 
 func NewNetwork() *Network {
 	return &Network{
-		Peers:      make(map[string]*Peer),
-		handlers:   make(map[string]func(in Request, out Response)),
-		middleware: make([]Middleware, 0),
+		Peers:          make(map[string]*Peer),
+		handlers:       make(map[string]func(in Request, out Response)),
+		middleware:     make([]Middleware, 0),
+		MaxMessageSize: 1400,
 	}
 }
 
@@ -34,7 +41,17 @@ func NewNetwork() *Network {
 // Inbound messages are passed to peer.Handle();
 // If input is from an unknown peer, a new network.Peer object
 // is created and associated with its IP.
-func (n *Network) Listen() {
+func (n *Network) Listen(port int) {
+
+	if !Debug {
+		Logger.SetFlags(0)
+		Logger.SetOutput(ioutil.Discard)
+	} else {
+		Logger.SetOutput(LogOutput)
+	}
+
+	n.Address = net.UDPAddr{Port: port}
+
 	var err error
 	laddr := &n.Address
 
@@ -44,7 +61,7 @@ func (n *Network) Listen() {
 		panic(err)
 	}
 
-	log.Print("[LISTENING]", "->", laddr)
+	Logger.Print("listening on ", laddr)
 
 	n.Listening = true
 	go func() {
@@ -56,8 +73,8 @@ func (n *Network) Listen() {
 				if n.Conn == nil {
 					n.Listening = false
 				}
-				log.Print("[UDPREADERROR]-> Failed to read from udp, dumping error below")
-				log.Print(err)
+				Logger.Print("udpreaderror - failed to read from udp, dumping error below")
+				Logger.Print(err)
 				continue
 			}
 
@@ -83,9 +100,9 @@ func (n *Network) Listen() {
 
 func (n *Network) formatAndHandleRequest(peer *Peer, buf []byte) {
 	var netMsg NetworkMessage
-	err := json.Unmarshal(buf, netMsg)
+	err := json.Unmarshal(buf, &netMsg)
 	if err != nil {
-		log.Println("err - bad request, bytes failed to parse", err)
+		Logger.Println("err - bad request, bytes failed to parse", err)
 		return
 	}
 
@@ -111,11 +128,12 @@ func (n *Network) formatAndHandleRequest(peer *Peer, buf []byte) {
 	}
 
 	//handle
-	if handler, known := n.handlers[in.Tag]; !known {
+	if handler, known := n.handlers[in.Tag]; known {
 		handler(in, out)
+		return
 	}
 
-	log.Printf("unknown request '%s' recieved from peer %s.", in.Tag, in.Sender.Addr.String())
+	Logger.Printf("unknown request '%s' recieved from peer %s.", in.Tag, in.Sender.Addr.String())
 	return
 }
 
@@ -146,7 +164,7 @@ func (n *Network) Connect(address string) bool {
 
 	// check if peer is already connected
 	if cpeer, known := n.Peers[address]; known {
-		log.Print("[CONNECT_ERROR] peer is already known.", cpeer.Addr.String())
+		Logger.Print("connectionerror - peer is already known.", cpeer.Addr.String())
 		return false
 	}
 
